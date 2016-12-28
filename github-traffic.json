@@ -1,0 +1,203 @@
+[
+    {
+        "name": "referrers",
+        "type": {
+            "type": "list",
+            "args": [
+                {
+                    "type": "array",
+                    "args": {
+                        "type": "object",
+                        "args": [
+                            {
+                                "name": "referrer",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "uniques",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "message",
+                            "type": "string"
+                        },
+                        {
+                            "name": "documentation_url",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "paths",
+        "type": {
+            "type": "list",
+            "args": [
+                {
+                    "type": "array",
+                    "args": {
+                        "type": "object",
+                        "args": [
+                            {
+                                "name": "path",
+                                "type": "string"
+                            },
+                            {
+                                "name": "title",
+                                "type": "string"
+                            },
+                            {
+                                "name": "count",
+                                "type": "number"
+                            },
+                            {
+                                "name": "uniques",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "message",
+                            "type": "string"
+                        },
+                        {
+                            "name": "documentation_url",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "views",
+        "type": {
+            "type": "list",
+            "args": [
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "count",
+                            "type": "number"
+                        },
+                        {
+                            "name": "uniques",
+                            "type": "number"
+                        },
+                        {
+                            "name": "views",
+                            "type": {
+                                "type": "array",
+                                "args": {
+                                    "type": "object",
+                                    "args": [
+                                        {
+                                            "name": "timestamp",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "name": "count",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "name": "uniques",
+                                            "type": "number"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "message",
+                            "type": "string"
+                        },
+                        {
+                            "name": "documentation_url",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "clones",
+        "type": {
+            "type": "list",
+            "args": [
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "count",
+                            "type": "number"
+                        },
+                        {
+                            "name": "uniques",
+                            "type": "number"
+                        },
+                        {
+                            "name": "clones",
+                            "type": {
+                                "type": "array",
+                                "args": {
+                                    "type": "object",
+                                    "args": [
+                                        {
+                                            "name": "timestamp",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "name": "count",
+                                            "type": "number"
+                                        },
+                                        {
+                                            "name": "uniques",
+                                            "type": "number"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "object",
+                    "args": [
+                        {
+                            "name": "message",
+                            "type": "string"
+                        },
+                        {
+                            "name": "documentation_url",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+]
+

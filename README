@@ -1,0 +1,258 @@
+
+              Type-Checked Access to Github's Repository Traffic API
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                         Stefan Vargyas, stvar@yahoo.com
+
+                                   Dec 28, 2016
+
+
+Table of Contents
+-----------------
+
+0. Copyright
+1. The Github-Traffic Program
+2. Prerequisites of Github-Traffic
+3. Use Cases of Github-Traffic
+4. References
+
+
+0. Copyright
+============
+
+This program is GPL-licensed free software. Its author is Stefan Vargyas. You
+can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License along with
+this program (look up for the file COPYING in the top directory of the source
+tree). If not, see http://gnu.org/licenses/gpl.html.
+
+Additional note: the file 'github-traffic.json' is subject to the same copyright
+and license provisions as the rest of the Github-Traffic is.
+
+
+1. The Github-Traffic Program
+=============================
+
+Since August 2016, Github made public an interesting API for querying repository
+traffic statistics data [5, 6] -- data which was already available in the Graphs
+section on the Github's website itself.
+
+Github-Traffic consists of a simple 'bash' shell script -- 'github-traffic.sh' --
+which is using cURL [1] and Json-Type [2] for type-checked access to this new
+repository traffic API.
+
+
+2. Prerequisites of Github-Traffic
+==================================
+
+For using the shell script 'github-traffic.sh' one needs the following programs:
+
+  ---------------    --------    -------------
+      package         binary        library
+  ---------------    --------    -------------
+  GNU bash 3.2.51      bash            -
+  GNU sed 4.1.5        sed             -
+  cURL 7.19.7          curl      libcurl.so.4
+  Json-Type 0.7.4    json 0.8    json.so 0.7.1
+  ---------------    --------    -------------
+
+The version numbers above indicate which packages were actually used developing
+Github-Traffic.
+
+While 'bash', 'sed' and 'curl' are programs commonly found on every GNU/Linux
+installation, 'json' and 'json.so' binaries need to be build from sources upon
+downloading the latest release tarball from [3]. Note that the all releases of
+Json-Type are signed with GnuPG, therefore upon downloading e.g. version 0.7.4
+by means of the following two commands:
+
+  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.7.4.tar.bz2
+
+  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.7.4.tar.bz2.sig
+
+one has to simply issue two instances of 'gpg' for to check the integrity of the
+received tarball (GnuPG FAQ [4]):
+
+  $ gpg --recv-keys 3D805B7A
+
+  $ gpg --verify json-type-0.7.4.tar.bz2.sig 
+
+Of the two commands above, the former imports into the local keyring Json-Type
+author's key, while the latter verifies the package signature -- thus validating
+its integrity.
+
+For building the needed Json-Type binaries -- 'json' and 'json.so' --, one needs
+to apply the build procedure described in the README file to be found in the top
+directory of Json-Type's source tree.
+
+Upon a successful build, for to make accessible to Github-Traffic the binaries
+obtained -- '$JSON_TYPE_HOME/src/json' and '$JSON_TYPE_HOME/lib/json.so' --, one
+has to simply define the following shell function wrapper:
+
+  $ json() { local JSON_TYPE_HOME=...; env LD_LIBRARY_PATH="$JSON_TYPE_HOME/lib" "$JSON_TYPE_HOME/src/json" "$@"; }
+
+where '$JSON_TYPE_HOME' points to the top directory of Json-Type's source tree.
+
+Instead of defining the 'json' shell function each time using Github-Traffic, it
+would be more convenient to install the two binaries in the system directories
+that are already referred to by '$PATH' and, respectively, '$LD_LIBRARY_PATH' --
+this done only once, upon completing the build procedure of Json-Type. E.g.:
+
+  $ export JSON_TYPE_HOME=...
+
+  $ sudo install -t /usr/local/bin "$JSON_TYPE_HOME/src/json"
+
+  $ sudo install -t /usr/local/lib "$JSON_TYPE_HOME/lib/json.so"
+
+
+3. Use Cases of Github-Traffic
+==============================
+
+The Github-Traffic program is made of the 'bash' shell function 'github-traffic'
+and a few auxiliaries to be brought in the current 'bash' shell environment by
+sourcing in the script file 'github-traffic.sh':
+
+  $ shopt -s extglob
+
+  $ . github-traffic.sh
+
+The command line options of shell function 'github-traffic' are as follows:
+
+  $ funchelp -f github-traffic.sh -c github-traffic --long-wrap-join=auto
+  actions:
+    -C|--clones             clones (default)
+    -P|--paths              paths
+    -R|--referrers          referrers
+    -V|--views              views
+  
+  options:
+    -e|--error-context=NUM  pass `-e|--error-context-size=NUM' to json (default:
+                              json's default: 32)
+    -h|--home=DIR           home dir (default: current directory)
+    -o:|--output=TYPE       output type: 'raw', 'echo', 'pretty', 'terse' or
+        --raw                 'json2' (default: 'json2')
+        --echo
+        --pretty
+        --terse
+        --json2
+    -r|--repo[sitory]=STR   repository name
+    -u|--user=STR           user and password to pass to curl
+    -v|--verbose            pass `-v|--verbose' to curl (otherwise pass `--silent
+                              --show-error')
+
+Almost all the options shown above are pretty much self-explanatory. The action
+options correspond each to one of the Github's endpoint of [6].
+
+The output of 'github-traffic' is controlled by option `-o|--output'. When the
+output type is 'raw' (that is when 'github-traffic' received one of the following
+equivalent options: `-o raw', `--output=raw' or `--raw'), than the shell function
+produces the raw JSON text it got from the respective Github endpoint.
+
+When output type is either 'echo', 'pretty', 'terse' or 'json2', then the raw
+JSON text obtained from the Github's endpoint is piped in to the 'json' program
+-- which is invoked with a corresponding action option:
+
+  output type   'json' option
+  -----------   -------------------
+  `--echo'      `-E|--echo-parse'         
+  `--pretty'    `-P|--pretty-print'
+  `--terse'     `-R|--terse-print'
+  `--json2'     `-J|--json2'
+
+The invocation of 'json' also includes an option of form `-t|--type-lib=FILE',
+where 'FILE' is set to 'github-traffic.json'. This JSON file contains the type
+definitions which are used by 'json' to validate the JSON text obtained from
+Github for each of the four kinds of APIs -- 'clones', 'paths', 'referrers' and
+'views'.
+
+Along specifying an action option, each invocation of 'github-traffic' needs two
+more parameters to be passed in to it: the name of the owner and the name of the
+repository for which traffic statistics data is queried.
+
+The repository is specified by the argument of option `-r|--repository' and the
+owner by the argument of option `-u|--user'. Note that the option `-u|--user' and
+its argument need not be specified in an invoking command line when the current
+environment defined the variable '$GITHUB_USER'.
+
+When 'user' is set to null -- i.e. when given `-u|--user=-' --, Github responds
+with an error message indicating that the named repository was not found:
+
+  $ github-traffic --clones -r github-traffic -u-
+  /message=Not Found
+  /documentation_url=https://developer.github.com/v3
+
+When again 'user' is null, but when specifying the repository name in the form
+of 'OWNER/REPOSITORY', than Github's response is also an error: one is allowed
+to access the traffic statistics data only if he is understood by Github as an
+owner of the respective repository (that happens when one passes to Github the
+valid password of the repository):
+
+  $ github-traffic --clones -r stvar/github-traffic -u-
+  /message=Must have admin rights to Repository.
+  /documentation_url=https://developer.github.com/v3
+
+Specifying the user name to 'github-traffic' without an attached password makes
+'curl' to ask for it interactively. If the case of an invalid password, Github's
+response is 'Bad credentials':
+
+  $ github-traffic --clones -r github-traffic -u stvar
+  Enter host password for user 'stvar':
+  /message=Bad credentials
+  /documentation_url=https://developer.github.com/v3
+
+If the user and password are both correct, then statistics data is provided by
+Github for the named repository, according to which action option was last given
+in the invoking command line:
+
+  $ github-traffic --clones -r github-traffic -u stvar
+  Enter host password for user 'stvar':
+  /count=0
+  /uniques=0
+
+  $ github-traffic --clones -r github-traffic -u stvar:************
+  /count=0
+  /uniques=0
+
+  $ export GITHUB_USER=stvar:************
+
+  $ github-traffic --clones -r github-traffic
+  /count=0
+  /uniques=0
+
+Each 'github-traffic' command line is allowed to contain a special option --
+`-d' -- which tell the shell function to avoid calling in Github and, instead,
+produce on output the internal command pipeline generated for execution: 
+
+  $ github-traffic --clones -r github-traffic -d
+  curl \
+  --silent --show-error \
+  --user stvar:************ \
+  --header 'Accept: application/vnd.github.spiderman-preview' \
+  https://api.github.com/repos/stvar/github-traffic/traffic/clones|
+  json -t github-traffic.json:clones -JV
+
+
+4. References
+=============
+
+[1] cURL: Command Line Tool and Library for Transferring Data with URLs
+    https://curl.haxx.se/
+
+[2] Json-Type: JSON Push Parsing and Type Checking
+    http://nongnu.org/json-type/
+
+[3] Json-Type's Release Tarballs
+    https://download.savannah.gnu.org/releases/json-type/
+
+[4] GnuPG FAQ: How can I use GnuPG to verify a file I've downloaded?
+    https://www.gnupg.org/faq/gnupg-faq.html#how_do_i_verify_signed_packages
+
+[5] Github Developer: Preview the Repository Traffic API
+    https://developer.github.com/changes/2016-08-15-traffic-api-preview/
+
+[6] Github Developer: API: Traffic 
+    https://developer.github.com/v3/repos/traffic/
+
+
