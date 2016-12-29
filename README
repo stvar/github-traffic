@@ -143,11 +143,11 @@ The command line options of shell function 'github-traffic' are as follows:
                               --show-error')
 
 Almost all the options shown above are pretty much self-explanatory. The action
-options correspond each to one of the Github's endpoint of [6].
+options correspond each to one of the Github's endpoints of [6].
 
 The output of 'github-traffic' is controlled by option `-o|--output'. When the
 output type is 'raw' (that is when 'github-traffic' received one of the following
-equivalent options: `-o raw', `--output=raw' or `--raw'), than the shell function
+equivalent options: `-o raw', `--output=raw' or `--raw'), then the shell function
 produces the raw JSON text it got from the respective Github endpoint.
 
 When output type is either 'echo', 'pretty', 'terse' or 'json2', then the raw
@@ -184,7 +184,7 @@ with an error message indicating that the named repository was not found:
   /documentation_url=https://developer.github.com/v3
 
 When again 'user' is null, but when specifying the repository name in the form
-of 'OWNER/REPOSITORY', than Github's response is also an error: one is allowed
+of 'OWNER/REPOSITORY', then Github's response is also an error: one is allowed
 to access the traffic statistics data only if he is understood by Github as an
 owner of the respective repository (that happens when one passes to Github the
 valid password of the repository):
@@ -194,7 +194,7 @@ valid password of the repository):
   /documentation_url=https://developer.github.com/v3
 
 Specifying the user name to 'github-traffic' without an attached password makes
-'curl' to ask for it interactively. If the case of an invalid password, Github's
+'curl' to ask for it interactively. In the case of an invalid password, Github's
 response is 'Bad credentials':
 
   $ github-traffic --clones -r github-traffic -u stvar
@@ -222,7 +222,7 @@ in the invoking command line:
   /uniques=0
 
 Each 'github-traffic' command line is allowed to contain a special option --
-`-d' -- which tell the shell function to avoid calling in Github and, instead,
+`-d' -- which tells the shell function to avoid calling in Github and, instead,
 produce on output the internal command pipeline generated for execution: 
 
   $ github-traffic --clones -r github-traffic -d
