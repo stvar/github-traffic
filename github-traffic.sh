@@ -501,7 +501,6 @@ github-traffic()
 
     local U="https://api.github.com/repos${u:+/${u%%:*}}/$r/traffic/$E"
 
-    quote h
     quote u
     quote U
     quote T
