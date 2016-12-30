@@ -43,37 +43,6 @@ quote()
     eval "$__n__=$__v__"
 }
 
-quote2()
-{
-    local __n__
-    local __v__
-
-    local __q__='q'
-    [ "$1" == '-i' ] && {
-        __q__=''
-        shift
-    }
-
-    [ -z "$1" -o "$1" == "__n__" -o "$1" == "__v__" -o "$1" == "__q__" ] &&
-    return 1
-
-    printf -v __n__ '%q' "$1"
-    eval __v__="\"\$$__n__\""
-    __v__="$(sed -nr '
-        H
-        $!b
-        g
-        s/^\n//
-        s/\x27/\0\\\0\0/g'${__q__:+'
-        s/^/\x27/
-        s/$/\x27/'}'
-        p
-    ' <<< "$__v__")"
-    test -n "$__v__" &&
-    printf -v __v__ '%q' "$__v__"
-    eval "$__n__=$__v__"
-}
-
 optopt()
 {
     local __n__="${1:-$opt}"       #!!!NONLOCAL
@@ -531,12 +500,10 @@ github-traffic()
     E="$T"
 
     local U="https://api.github.com/repos${u:+/${u%%:*}}/$r/traffic/$E"
-    local H='Accept: application/vnd.github.spiderman-preview'
 
     quote h
     quote u
     quote U
-    quote2 H
     quote T
 
     local c="\
@@ -547,8 +514,6 @@ curl"
 --verbose"
     [ -n "$u" ] && c+=" \\
 --user $u"
-    [ -n "$H" ] && c+=" \\
---header $H"
     c+=" \\
 $U"
     [ -n "$o" ] && c+="|

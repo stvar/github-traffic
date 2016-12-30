@@ -229,7 +229,6 @@ produce on output the internal command pipeline generated for execution:
   curl \
   --silent --show-error \
   --user stvar:************ \
-  --header 'Accept: application/vnd.github.spiderman-preview' \
   https://api.github.com/repos/stvar/github-traffic/traffic/clones|
   json -t github-traffic.json:clones -JV
 
@@ -249,8 +248,8 @@ produce on output the internal command pipeline generated for execution:
 [4] GnuPG FAQ: How can I use GnuPG to verify a file I've downloaded?
     https://www.gnupg.org/faq/gnupg-faq.html#how_do_i_verify_signed_packages
 
-[5] Github Developer: Preview the Repository Traffic API
-    https://developer.github.com/changes/2016-08-15-traffic-api-preview/
+[5] Github Developer: Traffic API is now official
+    https://developer.github.com/changes/2016-12-28-end-traffic-api-preview/
 
 [6] Github Developer: API: Traffic 
     https://developer.github.com/v3/repos/traffic/
