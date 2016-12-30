@@ -491,8 +491,7 @@ github-traffic()
             ;;
     esac
 
-    # stev: API doc:   https://developer.github.com/v3/repos/traffic/
-    # stev: blog post: https://developer.github.com/changes/2016-08-15-traffic-api-preview/
+    # stev: API doc: https://developer.github.com/v3/repos/traffic/
 
     local E
     [[ "$act" == [PR] ]] &&
