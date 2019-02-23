@@ -1,0 +1,40 @@
+{
+    "referrers": {
+        "referrer": "string",
+        "count": "uint(16)",
+        "uniques": "uint(16)",
+        "message": "string",
+        "documentation_url": "string"
+    },
+    "paths": {
+        "path": "string",
+        "title": "string",
+        "count": "uint(16)",
+        "uniques": "uint(16)",
+        "message": "string",
+        "documentation_url": "string"
+    },
+    "views": {
+        "count": "uint(16)",
+        "uniques": "uint(16)",
+        "views": {
+            "timestamp": "date(`%FT%TZ`)",
+            "count": "uint(16)",
+            "uniques": "uint(16)"
+        },
+        "message": "string",
+        "documentation_url": "string"
+    },
+    "clones": {
+        "count": "uint(16)",
+        "uniques": "uint(16)",
+        "clones": {
+            "timestamp": "date(`%FT%TZ`)",
+            "count": "uint(16)",
+            "uniques": "uint(16)"
+        },
+        "message": "string",
+        "documentation_url": "string"
+    }
+}
+
