@@ -533,6 +533,9 @@ curl"
     [ -n "$u" ] && c+=" \\
 --user $u"
     c+=" \\
+--retry 1000 \
+--retry-delay 1 \
+--connect-timeout 1 \\
 $U"
     [ -n "$o" ] && c+="|
 json ${t:+-t $t:$T }-${o}V${e:+ -e $e}${p:+ -f -- \\
