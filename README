@@ -90,7 +90,7 @@ directory of Json-Type's source tree. The library 'json-litex.so' is an optional
 component of Json-Type and is not strictly required by Github-Traffic.
 
 The function of 'json-litex.so' is to augment the structural type checking of
-input JSON texts done by 'json.so' with specific contraints imposed to the JSON
+input JSON texts done by 'json.so' with specific constraints imposed to the JSON
 literals of the respective texts. Therefore, it is advisable that one actually
 build 'json-litex.so' too. The README file gives all relevant details about the
 prerequisites of this latter library and its building procedure.
@@ -118,6 +118,7 @@ If one had built the optional library 'json-litex.so', then he should copy that
 binary alongside 'json.so':
 
   $ sudo install -t /usr/local/lib "$JSON_TYPE_HOME/lib/json-litex.so"
+
 
 3. Use Cases of Github-Traffic
 ==============================
@@ -248,8 +249,8 @@ produce on output the internal command pipeline generated for execution:
   json -t github-traffic.json:clones -JV -us
 
 If one had built the 'json-litex.so' library, then each command line invoking
-the shell function 'github-traffic' should contain the options that specifies
-to the shell function to use 'json-litex.so' along with the path library file
+the shell function 'github-traffic' should contain options that specify to
+the shell function to use 'json-litex.so' along with the path library file
 'github-traffic-litex.json'. These options are `-l|--json-litex':
 
   $ github-traffic --clones -r github-traffic -l -d
