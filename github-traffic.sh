@@ -306,6 +306,7 @@ github-traffic()
                         #  V: views (--views)
     local e="+"         # pass `-e|--error-context-size=NUM' to json (default: json's default: 32) (--error-context=NUM)
     local h="+"         # home dir (default: current directory) (--home=DIR)
+    local l=""          # do use 'json-litex.so' and 'github-traffic-litex.json' (--json-litex)
     local o="+"         # output type: 'raw', 'echo', 'pretty', 'terse' or 'json2' (default: 'json2') (--output=TYPE|--raw|--echo|--pretty|--terse|--json2)
     local r=""          # repository name (--repo[sitory]=STR)
     local u="+"         # user and password to pass to curl (--user=STR)
@@ -314,7 +315,7 @@ github-traffic()
     local opt
     local OPT
     local OPTN
-    local opts=":dCe:h:o:PRr:u:vVx-:"
+    local opts=":dCe:h:lo:PRr:u:vVx-:"
     local OPTARG
     local OPTERR=0
     local OPTIND=1
@@ -331,6 +332,8 @@ github-traffic()
                 opt='e' ;;
             home)
                 opt='h' ;;
+            json-litex)
+                opt='l' ;;
             @(output|$outx))
                 opt='o' ;;
             repo|repository)
@@ -364,7 +367,7 @@ github-traffic()
             [CPRV])
                 optact
                 ;;
-            [v])
+            [lv])
                 optopt
                 ;;
             [hru])
@@ -446,11 +449,23 @@ github-traffic()
     local t=''
     [ "$o" != 'raw' ] && {
         [[ -z "$h" || "$h" =~ /$ ]] || h+='/'
+
         t="${h:-./}$self.so"
         [ ! -f "$t" ] &&
         t="$h$self.json"
         [ ! -f "$t" ] && {
             error "json type-lib '$t' not found"
+            return  1
+        }
+    }
+
+    local p=''
+    [ "$o" != 'raw' -a -n "$l" ] && {
+        p="${h:-./}$self-litex.so"
+        [ ! -f "$p" ] &&
+        p="$h$self-litex.json"
+        [ ! -f "$p" ] && {
+            error "json path-lib '$p' not found"
             return  1
         }
     }
@@ -515,7 +530,8 @@ curl"
     c+=" \\
 $U"
     [ -n "$o" ] && c+="|
-json ${t:+-t $t:$T }-${o}V${e:+ -e $e}"
+json ${t:+-t $t:$T }-${o}V${e:+ -e $e}${p:+ -f -- \\
+json-litex.so -p $p:$T}"
 
     $x "$c"
 }
