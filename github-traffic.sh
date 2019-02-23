@@ -306,6 +306,7 @@ github-traffic()
                         #  V: views (--views)
     local e="+"         # pass `-e|--error-context-size=NUM' to json (default: json's default: 32) (--error-context=NUM)
     local h="+"         # home dir (default: current directory) (--home=DIR)
+    local k=""          # pass `-k|--insecure' to curl (--insecure)
     local l=""          # do use 'json-litex.so' and 'github-traffic-litex.json' (--json-litex)
     local o="+"         # output type: 'raw', 'echo', 'pretty', 'terse' or 'json2' (default: 'json2') (--output=TYPE|--raw|--echo|--pretty|--terse|--json2)
     local r=""          # repository name (--repo[sitory]=STR)
@@ -315,7 +316,7 @@ github-traffic()
     local opt
     local OPT
     local OPTN
-    local opts=":dCe:h:lo:PRr:u:vVx-:"
+    local opts=":dCe:h:klo:PRr:u:vVx-:"
     local OPTARG
     local OPTERR=0
     local OPTIND=1
@@ -332,6 +333,8 @@ github-traffic()
                 opt='e' ;;
             home)
                 opt='h' ;;
+            insecure)
+                opt='k' ;;
             json-litex)
                 opt='l' ;;
             @(output|$outx))
@@ -367,7 +370,7 @@ github-traffic()
             [CPRV])
                 optact
                 ;;
-            [lv])
+            [klv])
                 optopt
                 ;;
             [hru])
@@ -521,6 +524,8 @@ github-traffic()
 
     local c="\
 curl"
+    [ -n "$k" ] && c+=" \\
+--insecure"
     [ -z "$v" ] && c+=" \\
 --silent --show-error"
     [ -n "$v" ] && c+=" \\
