@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016  Stefan Vargyas
+# Copyright (C) 2016, 2019  Stefan Vargyas
 # 
 # This file is part of Github-Traffic.
 # 
