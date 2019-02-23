@@ -538,7 +538,7 @@ curl"
 --connect-timeout 1 \\
 $U"
     [ -n "$o" ] && c+="|
-json ${t:+-t $t:$T }-${o}V${e:+ -e $e}${p:+ -f -- \\
+json ${t:+-t $t:$T }-${o}V -us${e:+ -e $e}${p:+ -f -- \\
 json-litex.so -p $p:$T}"
 
     $x "$c"
