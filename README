@@ -29,8 +29,9 @@ You should have received a copy of the GNU General Public License along with
 this program (look up for the file COPYING in the top directory of the source
 tree). If not, see http://gnu.org/licenses/gpl.html.
 
-Additional note: the file 'github-traffic.json' is subject to the same copyright
-and license provisions as the rest of the Github-Traffic is.
+Additional note: the files 'github-traffic.json' and 'github-traffic-litex.json'
+are subject to the same copyright and license provisions as the rest of the
+Github-Traffic is.
 
 
 1. The Github-Traffic Program
@@ -50,14 +51,14 @@ repository traffic API.
 
 For using the shell script 'github-traffic.sh' one needs the following programs:
 
-  ---------------    --------    -------------
-      package         binary        library
-  ---------------    --------    -------------
-  GNU bash 3.2.51      bash            -
-  GNU sed 4.1.5        sed             -
-  cURL 7.19.7          curl      libcurl.so.4
-  Json-Type 0.7.4    json 0.8    json.so 0.7.1
-  ---------------    --------    -------------
+  ----------------    --------    -----------------------------------
+      package          binary                  libraries
+  ----------------    --------    -----------------------------------
+  GNU bash 3.2.51       bash                       -
+  GNU sed 4.1.5         sed                        -
+  cURL 7.19.7           curl                  libcurl.so.4
+  Json-Type 0.12.1    json 0.9    json.so 0.12.1, json-litex.so 0.1.1
+  ----------------    --------    -----------------------------------
 
 The version numbers above indicate which packages were actually used developing
 Github-Traffic.
@@ -65,19 +66,19 @@ Github-Traffic.
 While 'bash', 'sed' and 'curl' are programs commonly found on every GNU/Linux
 installation, 'json' and 'json.so' binaries need to be build from sources upon
 downloading the latest release tarball from [3]. Note that the all releases of
-Json-Type are signed with GnuPG, therefore upon downloading e.g. version 0.7.4
+Json-Type are signed with GnuPG, therefore upon downloading e.g. version 0.12.1
 by means of the following two commands:
 
-  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.7.4.tar.bz2
+  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.12.1.tar.bz2
 
-  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.7.4.tar.bz2.sig
+  $ curl -OL https://download.savannah.gnu.org/releases/json-type/json-type-0.12.1.tar.bz2.sig
 
 one has to simply issue two instances of 'gpg' for to check the integrity of the
 received tarball (GnuPG FAQ [4]):
 
   $ gpg --recv-keys 3D805B7A
 
-  $ gpg --verify json-type-0.7.4.tar.bz2.sig 
+  $ gpg --verify json-type-0.12.1.tar.bz2.sig 
 
 Of the two commands above, the former imports into the local keyring Json-Type
 author's key, while the latter verifies the package signature -- thus validating
@@ -85,7 +86,14 @@ its integrity.
 
 For building the needed Json-Type binaries -- 'json' and 'json.so' --, one needs
 to apply the build procedure described in the README file to be found in the top
-directory of Json-Type's source tree.
+directory of Json-Type's source tree. The library 'json-litex.so' is an optional
+component of Json-Type and is not strictly required by Github-Traffic.
+
+The function of 'json-litex.so' is to augment the structural type checking of
+input JSON texts done by 'json.so' with specific contraints imposed to the JSON
+literals of the respective texts. Therefore, it is advisable that one actually
+build 'json-litex.so' too. The README file gives all relevant details about the
+prerequisites of this latter library and its building procedure.
 
 Upon a successful build, for to make accessible to Github-Traffic the binaries
 obtained -- '$JSON_TYPE_HOME/src/json' and '$JSON_TYPE_HOME/lib/json.so' --, one
@@ -106,6 +114,10 @@ this done only once, upon completing the build procedure of Json-Type. E.g.:
 
   $ sudo install -t /usr/local/lib "$JSON_TYPE_HOME/lib/json.so"
 
+If one had built the optional library 'json-litex.so', then he should copy that
+binary alongside 'json.so':
+
+  $ sudo install -t /usr/local/lib "$JSON_TYPE_HOME/lib/json-litex.so"
 
 3. Use Cases of Github-Traffic
 ==============================
@@ -131,6 +143,8 @@ The command line options of shell function 'github-traffic' are as follows:
     -e|--error-context=NUM  pass `-e|--error-context-size=NUM' to json (default:
                               json's default: 32)
     -h|--home=DIR           home dir (default: current directory)
+    -k|--insecure           pass `-k|--insecure' to curl
+    -l|--json-litex         do use 'json-litex.so' and 'github-traffic-litex.json'
     -o:|--output=TYPE       output type: 'raw', 'echo', 'pretty', 'terse' or
         --raw                 'json2' (default: 'json2')
         --echo
@@ -229,8 +243,23 @@ produce on output the internal command pipeline generated for execution:
   curl \
   --silent --show-error \
   --user stvar:************ \
+  --retry 1000 --retry-delay 1 --connect-timeout 1 \
   https://api.github.com/repos/stvar/github-traffic/traffic/clones|
-  json -t github-traffic.json:clones -JV
+  json -t github-traffic.json:clones -JV -us
+
+If one had built the 'json-litex.so' library, then each command line invoking
+the shell function 'github-traffic' should contain the options that specifies
+to the shell function to use 'json-litex.so' along with the path library file
+'github-traffic-litex.json'. These options are `-l|--json-litex':
+
+  $ github-traffic --clones -r github-traffic -l -d
+  curl \
+  --silent --show-error \
+  --user stvar:************ \
+  --retry 1000 --retry-delay 1 --connect-timeout 1 \
+  https://api.github.com/repos/stvar/github-traffic/traffic/clones|
+  json -t github-traffic.json:clones -JV -us -f -- \
+  json-litex.so -p github-traffic-litex.json:clones
 
 
 4. References
